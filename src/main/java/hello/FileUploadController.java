@@ -51,7 +51,7 @@ public class FileUploadController {
                 .body(file);
     }
 
-    @PostMapping("/")
+    @RequestMapping("/")
     public String handleFileUpload(@RequestParam("file") MultipartFile file,
                                    RedirectAttributes redirectAttributes) {
 

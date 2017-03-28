@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 import hello.storage.StorageService;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @RestController
 public class FileController {
@@ -43,24 +44,18 @@ public class FileController {
 
     }
 
-    @RequestMapping(value="/imageUpload", method = RequestMethod.POST)
-    public void UploadFile(MultipartHttpServletRequest request) throws IOException {
+    @RequestMapping("/fileUpload")
+    public String handleFileUpload(@RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) {
 
-        Iterator<String> itr=request.getFileNames();
-        MultipartFile file=request.getFile(itr.next());
-        String fileName=file.getOriginalFilename();
-        File dir = new File("C:\\file");
-        if (dir.isDirectory())
-        {
-            File serverFile = new File(dir,fileName);
-            BufferedOutputStream stream = new BufferedOutputStream(
-                    new FileOutputStream(serverFile));
-            stream.write(file.getBytes());
-            stream.close();
+        if(file == null){
+            System.out.println("No received");
         }else {
-            System.out.println("not");
+            System.out.println("File received");
+            storageService.store(file);
+            redirectAttributes.addFlashAttribute("message",
+                    "You successfully uploaded " + file.getOriginalFilename() + "!");
         }
-
+        return "redirect:/";
     }
 }
 
