@@ -14,6 +14,7 @@ import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBui
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Controller
@@ -26,18 +27,16 @@ public class FileUploadController {
         this.storageService = storageService;
     }
 
-    @GetMapping("/")
-    public String listUploadedFiles(Model model) throws IOException {
+    @GetMapping("/files")
+    public List<String> listUploadedFiles(Model model) throws IOException {
 
-        model.addAttribute("files", storageService
+        return storageService
                 .loadAll()
                 .map(path ->
                         MvcUriComponentsBuilder
                                 .fromMethodName(FileUploadController.class, "serveFile", path.getFileName().toString())
                                 .build().toString())
-                .collect(Collectors.toList()));
-
-        return "uploadForm";
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/files/{filename:.+}")
@@ -51,7 +50,7 @@ public class FileUploadController {
                 .body(file);
     }
 
-    @RequestMapping("/")
+    @RequestMapping("/fileUploader")
     public String handleFileUpload(@RequestParam("file") MultipartFile file,
                                    RedirectAttributes redirectAttributes) {
 

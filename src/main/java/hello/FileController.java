@@ -10,6 +10,8 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -45,17 +47,9 @@ public class FileController {
     }
 
     @RequestMapping("/fileUpload")
-    public String handleFileUpload(@RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) {
-
-        if(file == null){
-            System.out.println("No received");
-        }else {
-            System.out.println("File received");
-            storageService.store(file);
-            redirectAttributes.addFlashAttribute("message",
-                    "You successfully uploaded " + file.getOriginalFilename() + "!");
-        }
-        return "redirect:/";
+    public ResponseEntity handleFileUpload(@RequestParam("file") MultipartFile file) {
+        storageService.store(file);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 }
 
