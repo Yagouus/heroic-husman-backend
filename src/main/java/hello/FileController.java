@@ -1,15 +1,10 @@
 package hello;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
-
 import hello.parser.parserCSV;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,10 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 import hello.storage.StorageService;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @RestController
 public class FileController {
@@ -35,6 +28,7 @@ public class FileController {
         this.storageService = storageService;
     }
 
+    //Lists all files in the server
     @GetMapping("/archivos")
     public List<String> listUploadedFiles(Model model) throws IOException {
 
@@ -48,21 +42,28 @@ public class FileController {
 
     }
 
-
+    //Accepts a file and saves it to the server
     @RequestMapping("/fileUpload")
     public ResponseEntity handleFileUpload(@RequestParam("file") MultipartFile file) {
         storageService.store(file);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
+    //Returns log column headers
     @RequestMapping("/headers")
     public ArrayList<String> listFileHeaders(@RequestParam("file") String file) {
+        //Trim uri to file name
         file = file.substring(file.lastIndexOf("/") + 1, file.length());
-        System.out.println(file);
-        System.out.println(storageService.load(file).toString());
-        System.out.println(parserCSV.getHeaders(storageService.load(file).toString()));
+        //Load and parse file
         return parserCSV.getHeaders(storageService.load(file).toString());
     }
+
+    //Removes the non selected columns from a log
+    @RequestMapping("/filterLog")
+    public void filterLog(@RequestParam("columns") ArrayList<String> columns) {
+        System.out.println(columns);
+    }
+
 
 }
 
