@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
+import hello.parser.parserCSV;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -51,5 +52,22 @@ public class FileController {
         storageService.store(file);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
+
+    @RequestMapping("/headers")
+    public List<String> listFileHeaders(@RequestParam("file") MultipartFile file) {
+        List Files = storageService
+                .loadAll()
+                .map(path ->
+                        MvcUriComponentsBuilder
+                                .fromMethodName(FileUploadController.class, "serveFile", path.getFileName().toString())
+                                .build().toString())
+                .collect(Collectors.toList());
+
+        System.out.println(Files.get(Files.size() - 1));
+
+        return Files;
+
+    }
+
 }
 
