@@ -1,13 +1,16 @@
 package hello.parser;
 
+
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
+import java.util.ArrayList;
+
 public class parserCSV {
 
-    public static void parse (String file) {
+    public static void parse(String file) {
 
         String csvFile = file;
         BufferedReader br = null;
@@ -41,5 +44,30 @@ public class parserCSV {
         }
 
     }
+
+    public static ArrayList<String> getHeaders(String file) {
+
+        String line = "";
+        String cvsSplitBy = ",";
+        ArrayList<String> result = new ArrayList<>();
+
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+
+            //If file is not empty
+            if ((line = br.readLine()) != null) {
+                String[] columns = line.split(cvsSplitBy);
+
+                //Add headers to array and remove quotes
+                for (String header : columns)
+                    result.add(header.replace("\"", ""));
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+        return result;
+    }
+
 
 }

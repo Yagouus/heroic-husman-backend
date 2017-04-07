@@ -4,6 +4,7 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
@@ -47,6 +48,7 @@ public class FileController {
 
     }
 
+
     @RequestMapping("/fileUpload")
     public ResponseEntity handleFileUpload(@RequestParam("file") MultipartFile file) {
         storageService.store(file);
@@ -54,9 +56,12 @@ public class FileController {
     }
 
     @RequestMapping("/headers")
-    public void listFileHeaders(@RequestParam("file") String file) {
+    public ArrayList<String> listFileHeaders(@RequestParam("file") String file) {
         file = file.substring(file.lastIndexOf("/") + 1, file.length());
-        parserCSV.parse(storageService.load(file).toString());
+        System.out.println(file);
+        System.out.println(storageService.load(file).toString());
+        System.out.println(parserCSV.getHeaders(storageService.load(file).toString()));
+        return parserCSV.getHeaders(storageService.load(file).toString());
     }
 
 }
