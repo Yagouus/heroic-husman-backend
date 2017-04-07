@@ -54,19 +54,9 @@ public class FileController {
     }
 
     @RequestMapping("/headers")
-    public List<String> listFileHeaders(@RequestParam("file") MultipartFile file) {
-        List Files = storageService
-                .loadAll()
-                .map(path ->
-                        MvcUriComponentsBuilder
-                                .fromMethodName(FileUploadController.class, "serveFile", path.getFileName().toString())
-                                .build().toString())
-                .collect(Collectors.toList());
-
-        System.out.println(Files.get(Files.size() - 1));
-
-        return Files;
-
+    public void listFileHeaders(@RequestParam("file") String file) {
+        file = file.substring(file.lastIndexOf("/") + 1, file.length());
+        parserCSV.parse(storageService.load(file).toString());
     }
 
 }
