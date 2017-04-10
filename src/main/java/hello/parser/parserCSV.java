@@ -1,6 +1,8 @@
 package hello.parser;
 
 
+import hello.dataTypes.Headers;
+
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -67,6 +69,10 @@ public class parserCSV {
         }
 
         return result;
+    }
+
+    public static void removeColumns(String file, Headers headers){
+
     }
 
 
