@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
+
+import hello.dataTypes.Headers;
 import hello.parser.parserCSV;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -60,7 +62,7 @@ public class FileController {
 
     //Removes the non selected columns from a log
     @RequestMapping("/filterLog")
-    public void filterLog(@RequestParam("columns") ArrayList<String> columns) {
+    public void filterLog(ArrayList<String> columns) {
         System.out.println(columns);
     }
 
