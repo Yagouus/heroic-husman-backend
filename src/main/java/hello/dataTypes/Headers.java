@@ -10,6 +10,10 @@ public class Headers {
 
     public Headers(){}
 
+    public Headers(ArrayList<String> data){
+        this.data = data;
+    }
+
     public ArrayList getData() {
         return data;
     }

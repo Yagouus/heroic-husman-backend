@@ -61,11 +61,10 @@ public class FileController {
     }
 
     //Removes the non selected columns from a log
-    @RequestMapping("/filterLog")
-    public void filterLog(ArrayList<String> columns) {
-        System.out.println(columns);
+    @RequestMapping(value = "/filterLog", method = RequestMethod.POST)
+    public void complexGreeting(Headers g) {
+        System.out.println(g.getData());
     }
-
 
 }
 
