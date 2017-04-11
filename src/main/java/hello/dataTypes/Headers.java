@@ -6,7 +6,7 @@ import java.util.HashMap;
 
 public class Headers {
 
-    private ArrayList data;
+    private ArrayList<String> data;
 
     public Headers(){}
 
@@ -14,11 +14,11 @@ public class Headers {
         this.data = data;
     }
 
-    public ArrayList getData() {
+    public ArrayList<String> getData() {
         return data;
     }
 
-    public void setData(ArrayList data) {
+    public void setData(ArrayList<String> data) {
         this.data = data;
     }
 }

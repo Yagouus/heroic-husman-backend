@@ -79,32 +79,57 @@ public class parserCSV {
         String filePath = storageService.load(fileName).toString();
         String archivePath = filePath.replace(fileName, "");
 
+        //Get filename and create new fileName
         fileName = fileName.substring(0, fileName.lastIndexOf('.'));
         String fileExt = file.substring(file.lastIndexOf("."), file.length());
 
-        System.out.println(fileName);
-        System.out.println(filePath);
-        System.out.println(archivePath);
-
-        try{
-            PrintWriter writer = new PrintWriter(archivePath + fileName + "parsed" + fileExt, "UTF-8");
-            writer.println("The first line");
-            writer.println("The second line");
-            writer.close();
-        } catch (IOException e) {
-            // do something
+        //Create new file
+        PrintWriter writer = null;
+        try {
+            writer = new PrintWriter(archivePath + fileName + "Parsed" + fileExt, "UTF-8");
+        } catch (FileNotFoundException | UnsupportedEncodingException e) {
+            e.printStackTrace();
         }
 
+        //Get headers to delete indexes
+        //PROBLEM AQUI
+        ArrayList<Integer> indexes = new ArrayList<>();
+        ArrayList<String> originalHeaders = getHeaders(filePath);
+        System.out.println(originalHeaders);
+        System.out.println(headers.getData());
+        for (String header : headers.getData()) {
+            if (originalHeaders.contains(header)) {
+                System.out.println(header);
+                System.out.println(originalHeaders.indexOf(header));
+                indexes.add(originalHeaders.indexOf(header));
+            }
+        }
 
+        System.out.println(indexes);
+
+        //Rewrite new file
         String line = "";
         String cvsSplitBy = ",";
         ArrayList<String> result = new ArrayList<>();
 
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
 
-            //If file is not empty
+            //For each line of the file
             while ((line = br.readLine()) != null) {
+
+                //For each column of the file
                 String[] columns = line.split(cvsSplitBy);
+                for (int i = 0; i < columns.length; i++) {
+                    if (!indexes.contains(i)) {
+                        writer.print(columns[i]);
+
+                        if (i < columns.length - 1) {
+                            writer.print(",");
+                        }
+                    }
+
+                }
+                writer.print("\n");
             }
 
         } catch (IOException e) {
