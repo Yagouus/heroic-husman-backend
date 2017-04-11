@@ -62,9 +62,10 @@ public class FileController {
 
     //Removes the non selected columns from a log
     @RequestMapping(value = "/filterLog", method = RequestMethod.POST)
-    public void complexGreeting(@RequestParam("file") String file, Headers g) {
+    public void complexGreeting(@RequestParam("file") String file, Headers headers) {
         System.out.println(file);
-        System.out.println(g.getData());
+        System.out.println(headers.getData());
+        parserCSV.removeColumns(file, headers, storageService);
     }
 
 }
