@@ -4,9 +4,9 @@ import com.mongodb.*;
 
 public class MongoJDBC {
 
-    MongoClient mongoClient;
-    DB db;
-    DBCollection coll;
+    public MongoClient mongoClient;
+    public DB db;
+    public DBCollection coll;
 
     public MongoJDBC() {
 

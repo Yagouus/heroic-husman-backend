@@ -1,8 +1,11 @@
 package hello.parser;
 
 
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBCollection;
 import hello.dataTypes.Headers;
 import hello.persistence.MongoDAO;
+import hello.persistence.MongoJDBC;
 import hello.storage.StorageService;
 
 import java.io.*;
@@ -10,6 +13,8 @@ import java.io.*;
 import java.util.ArrayList;
 
 public class parserCSV {
+
+    private static MongoJDBC mongo = new MongoJDBC();
 
     public static ArrayList<String> getHeaders(String file) {
 
@@ -40,7 +45,6 @@ public class parserCSV {
         //Trim uri to file name
         String fileName = file.substring(file.lastIndexOf("/") + 1, file.length());
 
-
         //Load file and get path
         String filePath = storageService.load(fileName).toString();
         String archivePath = filePath.replace(fileName, "");
@@ -57,6 +61,14 @@ public class parserCSV {
         } catch (FileNotFoundException | UnsupportedEncodingException e) {
             e.printStackTrace();
         }
+
+        //If coll exists, override
+        DBCollection coll;
+        if (mongo.db.collectionExists(fileName)) {
+            coll = mongo.db.getCollection(fileName);
+            coll.drop();
+        }
+        coll = mongo.db.createCollection(fileName, null);
 
         //Get headers to delete indexes
         ArrayList<Integer> indexes = new ArrayList<>();
@@ -77,11 +89,16 @@ public class parserCSV {
             //For each line of the file
             while ((line = br.readLine()) != null) {
 
+                //Create doc
+                BasicDBObject doc = new BasicDBObject();
+
                 //For each column of the file
                 String[] columns = line.split(cvsSplitBy);
                 for (int i = 0; i < columns.length; i++) {
                     if (!indexes.contains(i)) {
                         writer.print(columns[i]);
+                        String data = columns[i];
+                        doc.append(headers.getData().get(i), data.replace("\"", ""));
 
                         if (i < columns.length - 1) {
                             writer.print(",");
@@ -89,6 +106,8 @@ public class parserCSV {
                     }
 
                 }
+
+                MongoJDBC.insert(coll, doc);
                 writer.print("\n");
             }
 
@@ -96,7 +115,7 @@ public class parserCSV {
             e.printStackTrace();
         }
 
-        MongoDAO.insertLog(newFilePath, storageService);
+        //MongoDAO.insertLog(newFilePath, storageService);
 
     }
 
