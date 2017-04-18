@@ -4,30 +4,34 @@ import com.mongodb.*;
 
 public class MongoJDBC {
 
+    MongoClient mongoClient;
+    DB db;
+    DBCollection coll;
+
     public MongoJDBC() {
 
         //Connect to DB
-        MongoClient mongoClient = new MongoClient("localhost", 27017);
-        DB db = mongoClient.getDB("test");
+        mongoClient = new MongoClient("localhost", 27017);
+        db = mongoClient.getDB("test");
 
         //Check if collection exists
         //If not, create
         if (!db.collectionExists("mycol")) {
-            DBCollection coll = db.createCollection("mycol", null);
+            coll = db.createCollection("mycol", null);
         }
 
         //Get collection
-        DBCollection coll = db.getCollection("mycol");
+        coll = db.getCollection("mycol");
 
-        //Insert object
+        /*Insert object
         BasicDBObject doc = new BasicDBObject("title", "MongoDB").
                 append("description", "database").
                 append("likes", 100).
                 append("url", "http://www.tutorialspoint.com/mongodb/").
                 append("by", "tutorials point");
-        coll.insert(doc);
+        coll.insert(doc);*/
 
-        //Find documents
+        /*Find documents
         DBCursor cursor = coll.find();
         int i = 1;
 
@@ -35,10 +39,16 @@ public class MongoJDBC {
             System.out.println("Inserted Document: "+i);
             System.out.println(cursor.next());
             i++;
-        }
+        }*/
 
 
     }
+
+    public static void insert(DBCollection coll, BasicDBObject doc){
+        coll.insert(doc);
+    }
+
+
 
 }
 
