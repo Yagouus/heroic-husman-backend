@@ -88,6 +88,25 @@ public class parserCSV {
 
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
 
+            //We skip headers in DB
+            if ((line = br.readLine()) != null) {
+
+                //For each column of the file
+                String[] columns = line.split(cvsSplitBy);
+                for (int i = 0; i < columns.length; i++) {
+                    if (indexes.contains(i)) {
+                        //Write to new file
+                        writer.print(columns[i]);
+
+                        if (i < columns.length - 1) {
+                            writer.print(",");
+                        }
+                    }
+                }
+
+                writer.print("\n");
+            }
+
             //For each line of the file
             while ((line = br.readLine()) != null) {
 
