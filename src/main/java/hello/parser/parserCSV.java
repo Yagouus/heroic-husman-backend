@@ -62,7 +62,7 @@ public class parserCSV {
             e.printStackTrace();
         }
 
-        //If coll exists, override
+        //Create Mongo collection
         DBCollection coll;
         if (mongo.db.collectionExists(fileName)) {
             coll = mongo.db.getCollection(fileName);
@@ -73,9 +73,11 @@ public class parserCSV {
         //Get headers to delete indexes
         ArrayList<Integer> indexes = new ArrayList<>();
         ArrayList<String> originalHeaders = getHeaders(filePath);
+        ArrayList<String> newHeaders = new ArrayList<>();
         for (String header : headers.getData()) {
             if (originalHeaders.contains(header)) {
                 indexes.add(originalHeaders.indexOf(header));
+                newHeaders.add(originalHeaders.get(originalHeaders.indexOf(header)));
             }
         }
 
@@ -95,18 +97,22 @@ public class parserCSV {
                 //For each column of the file
                 String[] columns = line.split(cvsSplitBy);
                 for (int i = 0; i < columns.length; i++) {
-                    if (!indexes.contains(i)) {
+                    if (indexes.contains(i)) {
+
+                        //Write to new file
                         writer.print(columns[i]);
+
+                        //Add to mongo doc
                         String data = columns[i];
-                        doc.append(headers.getData().get(i), data.replace("\"", ""));
+                        doc.append(newHeaders.get(i), data.replace("\"", ""));
 
                         if (i < columns.length - 1) {
                             writer.print(",");
                         }
                     }
-
                 }
 
+                //Insert Mongo doc
                 MongoJDBC.insert(coll, doc);
                 writer.print("\n");
             }
@@ -114,6 +120,8 @@ public class parserCSV {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        //Get unique values
 
         //MongoDAO.insertLog(newFilePath, storageService);
 
