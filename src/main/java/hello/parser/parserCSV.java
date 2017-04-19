@@ -4,13 +4,13 @@ package hello.parser;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
 import hello.dataTypes.Headers;
-import hello.persistence.MongoDAO;
 import hello.persistence.MongoJDBC;
 import hello.storage.StorageService;
 
 import java.io.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class parserCSV {
 
@@ -40,7 +40,7 @@ public class parserCSV {
         return result;
     }
 
-    public static void removeColumns(String file, Headers headers, StorageService storageService) {
+    public static HashMap<String, ArrayList<String>> removeColumns(String file, Headers headers, StorageService storageService) {
 
         //Trim uri to file name
         String fileName = file.substring(file.lastIndexOf("/") + 1, file.length());
@@ -123,7 +123,7 @@ public class parserCSV {
 
                         //Add to mongo doc
                         String data = columns[i];
-                        doc.append(newHeaders.get(i), data.replace("\"", ""));
+                        doc.append(originalHeaders.get(i), data.replace("\"", ""));
 
                         if (i < columns.length - 1) {
                             writer.print(",");
@@ -141,6 +141,18 @@ public class parserCSV {
         }
 
         //Get unique values
+        HashMap<String, ArrayList<String>> data = new HashMap<>();
+
+        //Create index for each field
+        for(String header : newHeaders){
+            coll.createIndex(header);
+            data.put(header, (ArrayList<String>) coll.distinct(header));
+        }
+
+        return data;
+
+
+
 
         //MongoDAO.insertLog(newFilePath, storageService);
 

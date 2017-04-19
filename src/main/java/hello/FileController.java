@@ -2,6 +2,7 @@ package hello;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
@@ -62,8 +63,8 @@ public class FileController {
 
     //Removes the non selected columns from a log
     @RequestMapping(value = "/filterLog", method = RequestMethod.POST)
-    public void complexGreeting(@RequestParam("file") String file, Headers headers) {
-        parserCSV.removeColumns(file, headers, storageService);
+    public HashMap<String, ArrayList<String>> complexGreeting(@RequestParam("file") String file, Headers headers) {
+        return parserCSV.removeColumns(file, headers, storageService);
     }
 
 
