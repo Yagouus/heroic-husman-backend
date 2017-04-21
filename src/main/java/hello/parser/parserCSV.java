@@ -123,7 +123,11 @@ public class parserCSV {
 
                         //Add to mongo doc
                         String data = columns[i];
-                        doc.append(originalHeaders.get(i), data.replace("\"", ""));
+                        data = data.replace("\"", "");
+
+                        if (!data.equals("")) {
+                            doc.append(originalHeaders.get(i), data);
+                        }
 
                         if (i < columns.length - 1) {
                             writer.print(",");
@@ -144,14 +148,12 @@ public class parserCSV {
         HashMap<String, ArrayList<String>> data = new HashMap<>();
 
         //Create index for each field
-        for(String header : newHeaders){
+        for (String header : newHeaders) {
             coll.createIndex(header);
             data.put(header, (ArrayList<String>) coll.distinct(header));
         }
 
         return data;
-
-
 
 
         //MongoDAO.insertLog(newFilePath, storageService);
