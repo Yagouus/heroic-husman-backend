@@ -127,6 +127,8 @@ public class parserCSV {
 
                         if (!data.equals("")) {
                             doc.append(originalHeaders.get(i), data);
+                        }else{
+                            doc.append(originalHeaders.get(i), "-");
                         }
 
                         if (i < columns.length - 1) {
