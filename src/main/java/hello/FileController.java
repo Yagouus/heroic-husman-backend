@@ -4,11 +4,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 import hello.dataTypes.Headers;
 import hello.parser.parserCSV;
+import hello.persistence.MongoJDBC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,6 +44,14 @@ public class FileController {
                                 .fromMethodName(FileUploadController.class, "serveFile", path.getFileName().toString())
                                 .build().toString())
                 .collect(Collectors.toList());
+
+    }
+
+    //Lists all files in the server
+    @GetMapping("/dbs")
+    public Set<String> listDataBases(Model model) throws IOException {
+
+        return MongoJDBC.getDBS();
 
     }
 

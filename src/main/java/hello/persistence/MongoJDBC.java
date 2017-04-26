@@ -2,10 +2,12 @@ package hello.persistence;
 
 import com.mongodb.*;
 
+import java.util.Set;
+
 public class MongoJDBC {
 
     public MongoClient mongoClient;
-    public DB db;
+    public static DB db;
     public DBCollection coll;
 
     public MongoJDBC() {
@@ -46,6 +48,10 @@ public class MongoJDBC {
 
     public static void insert(DBCollection coll, BasicDBObject doc){
         coll.insert(doc);
+    }
+
+    public static Set<String> getDBS(){
+        return db.getCollectionNames();
     }
 
 
