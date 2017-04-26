@@ -1,8 +1,11 @@
 package hello.persistence;
 
+
 import com.mongodb.*;
 
-import java.util.Set;
+
+
+import java.util.*;
 
 public class MongoJDBC {
 
@@ -52,6 +55,27 @@ public class MongoJDBC {
 
     public static Set<String> getDBS(){
         return db.getCollectionNames();
+    }
+
+    public static HashMap<String, ArrayList<String>> getContent(String collName){
+
+        DBCollection coll = db.getCollection(collName);
+
+        //Get unique values
+        HashMap<String, ArrayList<String>> data = new HashMap<>();
+
+        List<DBObject> indexes = coll.getIndexInfo();
+
+        //Create index for each field
+        for (int i = 1; i < indexes.size(); i++) {
+            String key = indexes.get(i).get("key").toString();
+            String[] tokens = key.split("\"");
+
+            data.put(tokens[1], (ArrayList<String>) coll.distinct(tokens[1]));
+        }
+
+        return data;
+
     }
 
 

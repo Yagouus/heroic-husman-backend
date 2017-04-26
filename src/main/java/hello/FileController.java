@@ -77,6 +77,11 @@ public class FileController {
         return parserCSV.removeColumns(file, headers, storageService);
     }
 
+    //Removes the non selected columns from a log
+    @RequestMapping(value = "/db", method = RequestMethod.GET)
+    public HashMap<String, ArrayList<String>> db(@RequestParam("db") String db) {
+        return MongoJDBC.getContent(db);
+    }
 
 }
 
