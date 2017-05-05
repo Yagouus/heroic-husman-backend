@@ -8,7 +8,9 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
+import hello.dataTypes.Branch;
 import hello.dataTypes.Headers;
+import hello.dataTypes.Hierarchy;
 import hello.parser.parserCSV;
 import hello.persistence.MongoJDBC;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,5 +85,12 @@ public class FileController {
         return MongoJDBC.getContent(db);
     }
 
+    //Removes the non selected columns from a log
+    @RequestMapping(value = "/hierarchy", method = RequestMethod.POST)
+    public ArrayList<String> hierarchy (@RequestParam("file") String file, Hierarchy hierarchies) {
+        System.out.println(file);
+        System.out.println(hierarchies.getData()) ;
+        return null;
+    }
 }
 
