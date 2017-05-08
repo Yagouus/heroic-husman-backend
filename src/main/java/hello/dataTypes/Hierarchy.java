@@ -21,7 +21,6 @@ public class Hierarchy {
         this.data = data;
     }
 
-
     public void setData(ArrayList<String> data) {
         this.data = data;
     }
@@ -91,12 +90,12 @@ public class Hierarchy {
 
                 //If branch exists
                 if (this.branches.size() <= branch) {
-                    System.out.println("---NEW BRANCH---");
+                    //System.out.println("---NEW BRANCH---");
                     this.branches.add(new Branch());
                 }
 
-                System.out.print(key + " -> ");
-                System.out.println(value);
+                //System.out.print(key + " -> ");
+                //System.out.println(value);
 
                 //If key is registered
                 if (this.branches.get(branch).getData().containsKey(key)) {

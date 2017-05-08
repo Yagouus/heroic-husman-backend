@@ -12,6 +12,7 @@ import hello.dataTypes.Branch;
 import hello.dataTypes.Headers;
 import hello.dataTypes.Hierarchy;
 import hello.parser.parserCSV;
+import hello.persistence.MongoDAO;
 import hello.persistence.MongoJDBC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -82,7 +83,7 @@ public class FileController {
     //Removes the non selected columns from a log
     @RequestMapping(value = "/db", method = RequestMethod.GET)
     public HashMap<String, ArrayList<String>> db(@RequestParam("db") String db) {
-        return MongoJDBC.getContent(db);
+        return MongoDAO.getContent(db);
     }
 
     //Removes the non selected columns from a log
@@ -92,6 +93,7 @@ public class FileController {
         //System.out.println(hierarchies.getData().size());
         //System.out.println(hierarchies.getData());
         hierarchies.getBranches();
+        MongoDAO.queryLog(file, hierarchies,storageService);
         return null;
     }
 }

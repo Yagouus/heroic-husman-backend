@@ -2,6 +2,9 @@ package hello.persistence;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
+import com.mongodb.DBObject;
+import hello.dataTypes.Branch;
 import hello.dataTypes.Hierarchy;
 import hello.parser.parserCSV;
 import hello.storage.StorageService;
@@ -9,7 +12,7 @@ import hello.storage.StorageService;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.*;
 
 public class MongoDAO {
 
@@ -63,7 +66,64 @@ public class MongoDAO {
 
     }
 
-    public static void queryLog(String file, Hierarchy h, StorageService storageService){
+    public static HashMap<String, ArrayList<String>> getContent(String collName) {
+
+        DBCollection coll = mongo.db.getCollection(collName);
+
+        //Get unique values
+        HashMap<String, ArrayList<String>> data = new HashMap<>();
+
+        List<DBObject> indexes = coll.getIndexInfo();
+
+        //Create index for each field
+        for (int i = 1; i < indexes.size(); i++) {
+            String key = indexes.get(i).get("key").toString();
+            String[] tokens = key.split("\"");
+
+            data.put(tokens[1], (ArrayList<String>) coll.distinct(tokens[1]));
+        }
+
+        return data;
+
+    }
+
+    public static void queryLog(String file, Hierarchy h, StorageService storageService) {
+
+        //Get collection
+        DBCollection coll = mongo.db.getCollection(file);
+
+        //For each branch
+        for (Branch b : h.getBranches()) {
+
+            //Create new object to filter docs
+            System.out.println("New object");
+            BasicDBObject query = new BasicDBObject();
+
+            //For each column
+            Iterator it = b.getData().entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry pair = (Map.Entry) it.next();
+
+                //For each value
+                for(String value : b.getData().get(pair.getKey())){
+                    query.put(pair.getKey().toString(), value);
+                    System.out.println(pair.getKey().toString() + " = " + value);
+                }
+                //query.put(pair.getKey().toString(), b.getData().get(pair.getKey()).get(0));
+                //System.out.println(pair.getKey().toString() + " = " + b.getData().get(pair.getKey()).get(0));
+            }
+
+            //Do the query
+            DBCursor cursor = coll.find(query);
+            int i = 1;
+
+            while (cursor.hasNext()) {
+                System.out.println("Inserted Document: " + i);
+                System.out.println(cursor.next());
+                i++;
+            }
+        }
+
 
     }
 }
