@@ -75,6 +75,8 @@ public class Hierarchy {
 */
     public ArrayList<Branch> getBranches() {
 
+        HashMap<Integer, Integer> pairing = new HashMap<>();
+
         //If they are not processed
         if (this.branches == null) {
             this.branches = new ArrayList<>();
@@ -89,13 +91,17 @@ public class Hierarchy {
                 String value = columns[2];
 
                 //If branch exists
-                if (this.branches.size() <= branch) {
-                    //System.out.println("---NEW BRANCH---");
+                if (!pairing.containsKey(branch)) {
+                    System.out.println("---NEW BRANCH---");
                     this.branches.add(new Branch());
+                    pairing.put(branch, this.branches.size() -1);
+                    branch = this.branches.size() -1;
+                }else{
+                    branch = pairing.get(branch);
                 }
 
-                //System.out.print(key + " -> ");
-                //System.out.println(value);
+                System.out.print(key + " -> ");
+                System.out.println(value);
 
                 //If key is registered
                 if (this.branches.get(branch).getData().containsKey(key)) {
