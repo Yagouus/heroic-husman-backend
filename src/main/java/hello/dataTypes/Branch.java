@@ -1,27 +1,26 @@
 package hello.dataTypes;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
-/**
- * Created by yagouus on 5/05/17.
- */
 public class Branch {
 
 
-    private ArrayList<String> data;
+    private HashMap<String, ArrayList<String>> data;
 
-    public Branch(){}
+    public Branch(){
+        this.data = new HashMap<>();
+    }
 
-    public Branch(ArrayList<String> data){
+    public Branch(HashMap<String, ArrayList<String>> data){
         this.data = data;
     }
 
-    public void setData(ArrayList<String> data) {
+    public void setData(HashMap<String, ArrayList<String>> data) {
         this.data = data;
     }
 
-
-    public ArrayList<String> getData() {
+    public HashMap<String, ArrayList<String>> getData() {
         return data;
     }
 

@@ -2,6 +2,7 @@ package hello.persistence;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
+import hello.dataTypes.Hierarchy;
 import hello.parser.parserCSV;
 import hello.storage.StorageService;
 
@@ -59,6 +60,10 @@ public class MongoDAO {
             e.printStackTrace();
         }
 
+
+    }
+
+    public static void queryLog(String file, Hierarchy h, StorageService storageService){
 
     }
 }

@@ -88,8 +88,10 @@ public class FileController {
     //Removes the non selected columns from a log
     @RequestMapping(value = "/hierarchy", method = RequestMethod.POST)
     public ArrayList<String> hierarchy (@RequestParam("file") String file, Hierarchy hierarchies) {
-        System.out.println(file);
-        System.out.println(hierarchies.getData()) ;
+        //System.out.println(file);
+        //System.out.println(hierarchies.getData().size());
+        //System.out.println(hierarchies.getData());
+        hierarchies.getBranches();
         return null;
     }
 }
