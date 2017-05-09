@@ -87,13 +87,21 @@ public class MongoDAO {
 
     }
 
-    public static void queryLog(String file, Hierarchy h, StorageService storageService) {
+    public static Hierarchy queryLog(String file, Hierarchy h, StorageService storageService) {
 
-        //Get collection
-        DBCollection coll = mongo.db.getCollection(file);
+
+        Integer bIndex = 0;
+        ArrayList<String> headers = new ArrayList<>();
+
+        //Data to return
+        Hierarchy result = new Hierarchy();
+        ArrayList<Branch> content = new ArrayList<>();
 
         //For each branch
         for (Branch b : h.getBranches()) {
+
+            //Get collection
+            DBCollection coll = MongoJDBC.db.getCollection(file);
 
             //Create new object to filter docs
             System.out.println("New object");
@@ -103,27 +111,56 @@ public class MongoDAO {
             Iterator it = b.getData().entrySet().iterator();
             while (it.hasNext()) {
                 Map.Entry pair = (Map.Entry) it.next();
+                //headers.add(pair.getKey().toString());
 
                 //For each value
-                for(String value : b.getData().get(pair.getKey())){
+                for (String value : b.getData().get(pair.getKey())) {
                     query.put(pair.getKey().toString(), value);
                     System.out.println(pair.getKey().toString() + " = " + value);
                 }
-                //query.put(pair.getKey().toString(), b.getData().get(pair.getKey()).get(0));
-                //System.out.println(pair.getKey().toString() + " = " + b.getData().get(pair.getKey()).get(0));
             }
 
             //Do the query
             DBCursor cursor = coll.find(query);
             int i = 1;
 
+            //Create new collection for each branch
+            if (MongoJDBC.db.collectionExists(file + bIndex)) {
+                coll = MongoJDBC.db.getCollection(file + bIndex);
+                coll.drop();
+            }
+            coll = MongoJDBC.db.createCollection(file + bIndex, null);
+
             while (cursor.hasNext()) {
                 System.out.println("Inserted Document: " + i);
-                System.out.println(cursor.next());
+                BasicDBObject doc = (BasicDBObject) cursor.next();
+                headers = new ArrayList<>(doc.keySet());
+                System.out.println(doc);
+                MongoJDBC.insert(coll, doc);
                 i++;
             }
+            bIndex++;
+
+            //Get unique values
+            HashMap<String, ArrayList<String>> data = new HashMap<>();
+
+            //Create index for each field
+            headers.remove(0);
+            for (String header : headers) {
+                coll.createIndex(header);
+                data.put(header, (ArrayList<String>) coll.distinct(header));
+            }
+
+            Branch temp = new Branch(data);
+            content.add(temp);
+
         }
 
 
+        //Return result
+        result.setBranches(content);
+        return result;
+
     }
 }
+

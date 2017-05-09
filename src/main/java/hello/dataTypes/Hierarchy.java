@@ -25,6 +25,8 @@ public class Hierarchy {
         this.data = data;
     }
 
+    public void setBranches(ArrayList<Branch> branches){ this.branches = branches;}
+
     public ArrayList<String> getData() {
         return data;
     }
@@ -116,5 +118,9 @@ public class Hierarchy {
             //If content has already been loaded
         }
         return this.branches;
+    }
+
+    public void addBranch(Branch branch){
+        this.branches.add(branch);
     }
 }

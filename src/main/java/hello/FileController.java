@@ -8,7 +8,6 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
-import hello.dataTypes.Branch;
 import hello.dataTypes.Headers;
 import hello.dataTypes.Hierarchy;
 import hello.parser.parserCSV;
@@ -88,13 +87,10 @@ public class FileController {
 
     //Removes the non selected columns from a log
     @RequestMapping(value = "/hierarchy", method = RequestMethod.POST)
-    public ArrayList<String> hierarchy (@RequestParam("file") String file, Hierarchy hierarchies) {
-        //System.out.println(file);
-        //System.out.println(hierarchies.getData().size());
-        //System.out.println(hierarchies.getData());
+    public Hierarchy hierarchy (@RequestParam("file") String file, Hierarchy hierarchies) {
         hierarchies.getBranches();
-        MongoDAO.queryLog(file, hierarchies,storageService);
-        return null;
+        return MongoDAO.queryLog(file, hierarchies, storageService);
+
     }
 }
 
