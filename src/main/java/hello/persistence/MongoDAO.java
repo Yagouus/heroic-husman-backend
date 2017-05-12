@@ -89,6 +89,8 @@ public class MongoDAO {
 
     public static Hierarchy queryLog(String file, Hierarchy h, StorageService storageService) {
 
+        System.out.println(file);
+        System.out.println(h.getData());
 
         Integer bIndex = 0;
         ArrayList<String> headers = new ArrayList<>();
@@ -145,15 +147,16 @@ public class MongoDAO {
             HashMap<String, ArrayList<String>> data = new HashMap<>();
 
             //Create index for each field
-            headers.remove(0);
-            for (String header : headers) {
-                coll.createIndex(header);
-                data.put(header, (ArrayList<String>) coll.distinct(header));
+            if (!headers.isEmpty()) {
+                headers.remove(0);
+                for (String header : headers) {
+                    coll.createIndex(header);
+                    data.put(header, (ArrayList<String>) coll.distinct(header));
+                }
+
+                Branch temp = new Branch(data);
+                content.add(temp);
             }
-
-            Branch temp = new Branch(data);
-            content.add(temp);
-
         }
 
 

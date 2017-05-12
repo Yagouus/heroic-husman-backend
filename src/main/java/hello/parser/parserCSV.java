@@ -42,6 +42,8 @@ public class parserCSV {
 
     public static HashMap<String, ArrayList<String>> removeColumns(String file, Headers headers, StorageService storageService) {
 
+        System.out.println(headers.getData());
+
         //Trim uri to file name
         String fileName = file.substring(file.lastIndexOf("/") + 1, file.length());
 
@@ -64,11 +66,13 @@ public class parserCSV {
 
         //Create Mongo collection
         DBCollection coll;
-        if (mongo.db.collectionExists(fileName)) {
-            coll = mongo.db.getCollection(fileName);
+        if (MongoJDBC.db.collectionExists(fileName)) {
+            coll = MongoJDBC.db.getCollection(fileName);
             coll.drop();
         }
-        coll = mongo.db.createCollection(fileName, null);
+
+        System.out.println(fileName);
+        coll = MongoJDBC.db.createCollection(fileName, null);
 
         //Get headers to delete indexes
         ArrayList<Integer> indexes = new ArrayList<>();
@@ -85,6 +89,8 @@ public class parserCSV {
         String line = "";
         String cvsSplitBy = ",";
         ArrayList<String> result = new ArrayList<>();
+
+        System.out.println(filePath);
 
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
 
@@ -138,6 +144,7 @@ public class parserCSV {
                 }
 
                 //Insert Mongo doc
+
                 MongoJDBC.insert(coll, doc);
                 writer.print("\n");
             }
