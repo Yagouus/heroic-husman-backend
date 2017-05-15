@@ -53,9 +53,7 @@ public class FileController {
     //Lists all files in the server
     @GetMapping("/dbs")
     public Set<String> listDataBases(Model model) throws IOException {
-
-        return MongoJDBC.getDBS();
-
+        return MongoDAO.getCollections();
     }
 
     //Accepts a file and saves it to the server
@@ -89,7 +87,7 @@ public class FileController {
 
     //Removes the non selected columns from a log
     @RequestMapping(value = "/hierarchy", method = RequestMethod.POST)
-    public Hierarchy hierarchy (@RequestParam("file") String file, Hierarchy hierarchies) {
+    public Hierarchy hierarchy(@RequestParam("file") String file, Hierarchy hierarchies) {
         hierarchies.getBranches();
         return MongoDAO.queryLog(file, hierarchies, storageService);
 

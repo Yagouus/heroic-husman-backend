@@ -36,6 +36,10 @@ public class MongoDAO {
         return db.getCollection(name);
     }
 
+    public static Set<String> getCollections(){
+        return db.getCollectionNames();
+    }
+
     public static void insertLog(String filePath, StorageService storageService) {
 
         //Create new collection

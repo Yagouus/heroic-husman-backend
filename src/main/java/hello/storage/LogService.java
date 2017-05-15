@@ -17,31 +17,25 @@ public class LogService {
 
     public static void init(LogRepository repository) {
 
+        //Init repo
         repo = repository;
 
-        //Create a collection to store log information
-        //storage = MongoDAO.createCollection("logs");
-
-        //Init log repository
-
         //Select all files from collection
-        repo.save(new Log());
-        repo.findAll();
-
-
+        repo.save(new Log(null, "Prueba", null, null, null,null, null, null, null));
+        logs = (ArrayList<Log>) repo.findAll();
 
     }
 
     public static Log insertLog(String name, String path) {
-        Log l = new Log();
-        l.setName(name);
-        l.setPath(path);
-        repo.save(new Log());
-        return l;
+        //Insert log
+        repo.save(new Log(null, name, path, name, null,null, null, null, null));
+
+        //Return created log
+        return null;
     }
 
     public static ArrayList<Log> getLogs(){
-        return (ArrayList<Log>) repo.findAll();
+        return logs;
     }
 
 }
