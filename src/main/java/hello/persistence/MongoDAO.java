@@ -1,9 +1,6 @@
 package hello.persistence;
 
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBCollection;
-import com.mongodb.DBCursor;
-import com.mongodb.DBObject;
+import com.mongodb.*;
 import hello.dataTypes.Branch;
 import hello.dataTypes.Hierarchy;
 import hello.parser.parserCSV;
@@ -16,7 +13,28 @@ import java.util.*;
 
 public class MongoDAO {
 
-    private static MongoJDBC mongo = new MongoJDBC();
+    public static MongoClient mongoClient = new MongoClient("localhost", 27017);
+    public static DB db = mongoClient.getDB("test");
+    public DBCollection coll;
+
+    //Basic operations
+    public static DBCollection createCollection(String name) {
+
+        DBCollection coll;
+
+        //If coll exists, override
+        coll = db.createCollection(name, null);
+
+        return coll;
+    }
+
+    public static DBCursor queryCollection(DBCollection coll, BasicDBObject query){
+        return coll.find(query);
+    }
+
+    public static DBCollection getCollection(String name){
+        return db.getCollection(name);
+    }
 
     public static void insertLog(String filePath, StorageService storageService) {
 
@@ -25,11 +43,11 @@ public class MongoDAO {
         DBCollection coll;
 
         //If coll exists, override
-        if (mongo.db.collectionExists(fileName)) {
-            coll = mongo.db.getCollection(fileName);
+        if (db.collectionExists(fileName)) {
+            coll = db.getCollection(fileName);
             coll.drop();
         }
-        coll = mongo.db.createCollection(fileName, null);
+        coll = db.createCollection(fileName, null);
 
         String line = "";
         String cvsSplitBy = ",";
@@ -68,7 +86,7 @@ public class MongoDAO {
 
     public static HashMap<String, ArrayList<String>> getContent(String collName) {
 
-        DBCollection coll = mongo.db.getCollection(collName);
+        DBCollection coll = db.getCollection(collName);
 
         //Get unique values
         HashMap<String, ArrayList<String>> data = new HashMap<>();
@@ -103,7 +121,7 @@ public class MongoDAO {
         for (Branch b : h.getBranches()) {
 
             //Get collection
-            DBCollection coll = MongoJDBC.db.getCollection(file);
+            DBCollection coll = db.getCollection(file);
 
             //Create new object to filter docs
             System.out.println("New object");
@@ -127,11 +145,11 @@ public class MongoDAO {
             int i = 1;
 
             //Create new collection for each branch
-            if (MongoJDBC.db.collectionExists(file + bIndex)) {
-                coll = MongoJDBC.db.getCollection(file + bIndex);
+            if (db.collectionExists(file + bIndex)) {
+                coll = db.getCollection(file + bIndex);
                 coll.drop();
             }
-            coll = MongoJDBC.db.createCollection(file + bIndex, null);
+            coll = db.createCollection(file + bIndex, null);
 
             while (cursor.hasNext()) {
                 System.out.println("Inserted Document: " + i);

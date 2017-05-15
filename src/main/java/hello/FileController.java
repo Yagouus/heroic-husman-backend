@@ -13,6 +13,7 @@ import hello.dataTypes.Hierarchy;
 import hello.parser.parserCSV;
 import hello.persistence.MongoDAO;
 import hello.persistence.MongoJDBC;
+import hello.storage.LogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -61,6 +62,7 @@ public class FileController {
     @RequestMapping("/fileUpload")
     public ResponseEntity handleFileUpload(@RequestParam("file") MultipartFile file) {
         storageService.store(file);
+        LogService.insertLog("prueba", file.getName());
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 

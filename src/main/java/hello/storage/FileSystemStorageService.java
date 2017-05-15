@@ -36,8 +36,6 @@ public class FileSystemStorageService implements StorageService {
         }
     }
 
-
-
     @Override
     public Stream<Path> loadAll() {
         try {
@@ -87,4 +85,6 @@ public class FileSystemStorageService implements StorageService {
             throw new StorageException("Could not initialize storage", e);
         }
     }
+
+
 }
