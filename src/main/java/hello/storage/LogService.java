@@ -21,7 +21,7 @@ public class LogService {
         repo = repository;
 
         //Select all files from collection
-        repo.save(new Log(null, "Prueba", null, null, null,null, null, null, null));
+        //repo.save(new Log(null, "Prueba", null, null, null,null, null, null, null));
         logs = (ArrayList<Log>) repo.findAll();
 
     }

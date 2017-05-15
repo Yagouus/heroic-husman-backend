@@ -58,9 +58,10 @@ public class FileController {
 
     //Accepts a file and saves it to the server
     @RequestMapping("/fileUpload")
-    public ResponseEntity handleFileUpload(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity handleFileUpload(@RequestParam("file") MultipartFile file, String name) {
+        System.out.println(name);
         storageService.store(file);
-        LogService.insertLog("prueba", file.getName());
+        LogService.insertLog(name, file.getName());
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
