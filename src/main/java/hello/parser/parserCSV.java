@@ -4,6 +4,7 @@ package hello.parser;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
 import hello.dataTypes.Headers;
+import hello.dataTypes.Log;
 import hello.persistence.MongoJDBC;
 import hello.storage.StorageService;
 
@@ -19,13 +20,13 @@ public class parserCSV {
 
     public static Headers getHeaders(String file) {
 
-        System.out.println("FILE NAME: " + file);
+        System.out.println("FILE PATH: " + file);
 
         String line = "";
         String cvsSplitBy = ",";
         ArrayList<String> result = new ArrayList<>();
 
-        System.out.println(storageService.load(file).toString());
+        System.out.println("FILE PATH LOADED:" + storageService.load(file).toString());
 
         try (BufferedReader br = new BufferedReader(new FileReader(storageService.load(file).toString()))) {
 
@@ -47,21 +48,18 @@ public class parserCSV {
         return h;
     }
 
-    public static HashMap<String, ArrayList<String>> removeColumns(String file, Headers headers, StorageService storageService) {
+    public static HashMap<String, ArrayList<String>> removeColumns(Log log, Headers headers) {
 
-        System.out.println(headers.getData());
+        String file = log.getPath();
 
-        //Trim uri to file name
-        String fileName = file.substring(file.lastIndexOf("/") + 1, file.length());
 
         //Load file and get path
-        String filePath = storageService.load(fileName).toString();
-        String archivePath = filePath.replace(fileName, "");
+        String filePath = storageService.load(file).toString();
+        String archivePath = filePath.replace(file, "");
 
         //Get filename and create new fileName
-        fileName = fileName.substring(0, fileName.lastIndexOf('.'));
         String fileExt = file.substring(file.lastIndexOf("."), file.length());
-        String newFilePath = archivePath + fileName + "Parsed" + fileExt;
+        String newFilePath = archivePath + file + "Parsed" + fileExt;
 
         //Create new file
         PrintWriter writer = null;
@@ -73,17 +71,17 @@ public class parserCSV {
 
         //Create Mongo collection
         DBCollection coll;
-        if (MongoJDBC.db.collectionExists(fileName)) {
-            coll = MongoJDBC.db.getCollection(fileName);
+        if (MongoJDBC.db.collectionExists(file)) {
+            coll = MongoJDBC.db.getCollection(file);
             coll.drop();
         }
 
-        System.out.println(fileName);
-        coll = MongoJDBC.db.createCollection(fileName, null);
+
+        coll = MongoJDBC.db.createCollection(file, null);
 
         //Get headers to delete indexes
         ArrayList<Integer> indexes = new ArrayList<>();
-        ArrayList<String> originalHeaders = getHeaders(filePath).getData();
+        ArrayList<String> originalHeaders = log.getHeaders().getData();
         ArrayList<String> newHeaders = new ArrayList<>();
         for (String header : headers.getData()) {
             if (originalHeaders.contains(header)) {
@@ -96,8 +94,6 @@ public class parserCSV {
         String line = "";
         String cvsSplitBy = ",";
         ArrayList<String> result = new ArrayList<>();
-
-        System.out.println(filePath);
 
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
 

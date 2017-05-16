@@ -65,15 +65,20 @@ public class Log {
         return this.path;
     }
 
+
+
     public Headers getHeaders() {
 
         //Check if headers already fetched
         if (this.headers == null) {
-            System.out.println(path);
             this.headers = parserCSV.getHeaders(this.path);
             LogService.save(this);
         }
-        
+
         return this.headers;
+    }
+
+    public HashMap<String, ArrayList<String>> insertFile(Headers columns) {
+        return parserCSV.removeColumns(this, columns);
     }
 }

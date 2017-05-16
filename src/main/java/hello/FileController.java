@@ -56,7 +56,7 @@ public class FileController {
         return MongoDAO.getCollections();
     }
 
-    //Accepts a file and saves it to the server
+    //Saves file to the server and registers Log in collection
     @RequestMapping("/fileUpload")
     public ResponseEntity handleFileUpload(@RequestParam("file") MultipartFile file, String name) {
         storageService.store(file);
@@ -68,7 +68,7 @@ public class FileController {
     @RequestMapping("/headers")
     public Headers listFileHeaders(@RequestParam("file") String file) {
 
-        System.out.println("Get headers of: " + file);
+        //System.out.println("Get headers of: " + file);
 
         //Trim uri to file name
         //file = file.substring(file.lastIndexOf("/") + 1, file.length());
@@ -82,7 +82,8 @@ public class FileController {
     //Removes the non selected columns from a log
     @RequestMapping(value = "/filterLog", method = RequestMethod.POST)
     public HashMap<String, ArrayList<String>> complexGreeting(@RequestParam("file") String file, Headers headers) {
-        return parserCSV.removeColumns(file, headers, storageService);
+        return LogService.getLogByName(file).insertFile(headers);
+        //return parserCSV.removeColumns(file, headers, storageService);
     }
 
     //Removes the non selected columns from a log
