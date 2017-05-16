@@ -1,7 +1,9 @@
 package hello.dataTypes;
 
 import com.mongodb.DBCollection;
+import hello.parser.parserCSV;
 import hello.persistence.MongoDAO;
+import hello.storage.LogService;
 import org.springframework.data.annotation.Id;
 
 import java.util.ArrayList;
@@ -22,9 +24,13 @@ public class Log {
     HashMap<String, String> pairing;
     String state;
 
-    public Log() {}
+    //BUILDERS
+    public Log() {
+    }
 
-    public Log(Long user, String name, String path, String dbName, DBCollection coll, Headers headers, Headers hierarchyCols, HashMap<String, String> pairing, String state){
+    public Log(Long user, String name, String path, String dbName, DBCollection coll, Headers headers, Headers hierarchyCols, HashMap<String, String> pairing, String state) {
+
+        //Assing data
         this.user = user;
         this.name = name;
         this.path = path;
@@ -36,6 +42,7 @@ public class Log {
         this.state = state;
     }
 
+    //SETTERS
     public void setName(String name) {
         this.name = name;
     }
@@ -47,5 +54,26 @@ public class Log {
     public void setDb(String db) {
         this.dbName = db;
         this.coll = MongoDAO.getCollection(this.dbName);
+    }
+
+    //GETTERS
+    public String getName() {
+        return this.name;
+    }
+
+    public String getPath() {
+        return this.path;
+    }
+
+    public Headers getHeaders() {
+
+        //Check if headers already fetched
+        if (this.headers == null) {
+            System.out.println(path);
+            this.headers = parserCSV.getHeaders(this.path);
+            LogService.save(this);
+        }
+        
+        return this.headers;
     }
 }

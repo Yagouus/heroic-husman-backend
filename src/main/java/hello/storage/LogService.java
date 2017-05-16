@@ -16,14 +16,11 @@ public class LogService {
     private static ArrayList<Log> logs = new ArrayList<>();
 
     public static void init(LogRepository repository) {
-
         //Init repo
         repo = repository;
 
         //Select all files from collection
-        //repo.save(new Log(null, "Prueba", null, null, null,null, null, null, null));
         logs = (ArrayList<Log>) repo.findAll();
-
     }
 
     public static Log insertLog(String name, String path) {
@@ -35,7 +32,15 @@ public class LogService {
     }
 
     public static ArrayList<Log> getLogs(){
-        return logs;
+        return logs = (ArrayList<Log>) repo.findAll();
+    }
+
+    public static Log getLogByName(String name){
+        return repo.findByName(name);
+    }
+
+    public static Log save(Log log){
+        return repo.save(log);
     }
 
 }

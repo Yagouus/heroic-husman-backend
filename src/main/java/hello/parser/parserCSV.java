@@ -15,14 +15,19 @@ import java.util.HashMap;
 public class parserCSV {
 
     private static MongoJDBC mongo = new MongoJDBC();
+    public static StorageService storageService;
 
-    public static ArrayList<String> getHeaders(String file) {
+    public static Headers getHeaders(String file) {
+
+        System.out.println("FILE NAME: " + file);
 
         String line = "";
         String cvsSplitBy = ",";
         ArrayList<String> result = new ArrayList<>();
 
-        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+        System.out.println(storageService.load(file).toString());
+
+        try (BufferedReader br = new BufferedReader(new FileReader(storageService.load(file).toString()))) {
 
             //If file is not empty
             if ((line = br.readLine()) != null) {
@@ -37,7 +42,9 @@ public class parserCSV {
             e.printStackTrace();
         }
 
-        return result;
+        Headers h = new Headers();
+        h.setData(result);
+        return h;
     }
 
     public static HashMap<String, ArrayList<String>> removeColumns(String file, Headers headers, StorageService storageService) {
@@ -76,7 +83,7 @@ public class parserCSV {
 
         //Get headers to delete indexes
         ArrayList<Integer> indexes = new ArrayList<>();
-        ArrayList<String> originalHeaders = getHeaders(filePath);
+        ArrayList<String> originalHeaders = getHeaders(filePath).getData();
         ArrayList<String> newHeaders = new ArrayList<>();
         for (String header : headers.getData()) {
             if (originalHeaders.contains(header)) {

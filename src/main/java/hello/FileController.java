@@ -3,16 +3,14 @@ package hello;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.stream.Collectors;
 
 import hello.dataTypes.Headers;
 import hello.dataTypes.Hierarchy;
+import hello.dataTypes.Log;
 import hello.parser.parserCSV;
 import hello.persistence.MongoDAO;
-import hello.persistence.MongoJDBC;
 import hello.storage.LogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,7 +18,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 import hello.storage.StorageService;
 
 @RestController
@@ -34,19 +31,22 @@ public class FileController {
     @Autowired
     public FileController(StorageService storageService) {
         this.storageService = storageService;
+        parserCSV.storageService = storageService;
     }
 
     //Lists all files in the server
     @GetMapping("/archivos")
-    public List<String> listUploadedFiles(Model model) throws IOException {
+    public ArrayList<Log> listUploadedFiles(Model model) throws IOException {
 
-        return storageService
+        /*return storageService
                 .loadAll()
                 .map(path ->
                         MvcUriComponentsBuilder
                                 .fromMethodName(FileUploadController.class, "serveFile", path.getFileName().toString())
                                 .build().toString())
-                .collect(Collectors.toList());
+                .collect(Collectors.toList());*/
+
+        return LogService.getLogs();
 
     }
 
@@ -59,19 +59,24 @@ public class FileController {
     //Accepts a file and saves it to the server
     @RequestMapping("/fileUpload")
     public ResponseEntity handleFileUpload(@RequestParam("file") MultipartFile file, String name) {
-        System.out.println(name);
         storageService.store(file);
-        LogService.insertLog(name, file.getName());
+        LogService.insertLog(name, file.getOriginalFilename());
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     //Returns log column headers
     @RequestMapping("/headers")
-    public ArrayList<String> listFileHeaders(@RequestParam("file") String file) {
+    public Headers listFileHeaders(@RequestParam("file") String file) {
+
+        System.out.println("Get headers of: " + file);
+
         //Trim uri to file name
-        file = file.substring(file.lastIndexOf("/") + 1, file.length());
+        //file = file.substring(file.lastIndexOf("/") + 1, file.length());
         //Load and parse file
-        return parserCSV.getHeaders(storageService.load(file).toString());
+        //System.out.println(file);
+        return LogService.getLogByName(file).getHeaders();
+        //return parserCSV.getHeaders(LogService.getLogByName(file).getPath());
+
     }
 
     //Removes the non selected columns from a log

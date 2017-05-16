@@ -55,7 +55,7 @@ public class MongoDAO {
 
         String line = "";
         String cvsSplitBy = ",";
-        ArrayList<String> headers = parserCSV.getHeaders(filePath);
+        ArrayList<String> headers = parserCSV.getHeaders(filePath).getData();
         //ArrayList<String> headers = parserCSV.getHeaders(filePath);
 
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
