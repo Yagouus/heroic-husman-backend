@@ -56,6 +56,11 @@ public class Log {
         this.coll = MongoDAO.getCollection(this.dbName);
     }
 
+    public void setColl(DBCollection coll){
+        //this.coll = coll;
+        LogService.save(this);
+    }
+
     //GETTERS
     public String getName() {
         return this.name;
@@ -65,7 +70,7 @@ public class Log {
         return this.path;
     }
 
-
+    public DBCollection getColl() { return this.coll; }
 
     public Headers getHeaders() {
 
@@ -79,6 +84,9 @@ public class Log {
     }
 
     public HashMap<String, ArrayList<String>> insertFile(Headers columns) {
-        return parserCSV.removeColumns(this, columns);
+        HashMap<String, ArrayList<String>> r = parserCSV.removeColumns(this, columns);
+        this.headers = parserCSV.getHeaders(this.path);
+        LogService.save(this);
+        return r;
     }
 }

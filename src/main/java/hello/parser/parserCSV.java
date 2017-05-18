@@ -58,8 +58,11 @@ public class parserCSV {
         String archivePath = filePath.replace(file, "");
 
         //Get filename and create new fileName
+        String f = file.substring(0, file.lastIndexOf('.'));
         String fileExt = file.substring(file.lastIndexOf("."), file.length());
-        String newFilePath = archivePath + file + "Parsed" + fileExt;
+        String newFilePath = archivePath + f + "Parsed" + fileExt;
+        log.setPath(f + "Parsed" + fileExt);
+        //String newFilePath = archivePath + file + fileExt;
 
         //Create new file
         PrintWriter writer = null;
@@ -78,6 +81,7 @@ public class parserCSV {
 
 
         coll = MongoJDBC.db.createCollection(file, null);
+
 
         //Get headers to delete indexes
         ArrayList<Integer> indexes = new ArrayList<>();
@@ -164,6 +168,12 @@ public class parserCSV {
             coll.createIndex(header);
             data.put(header, (ArrayList<String>) coll.distinct(header));
         }
+
+        //delete old rename new
+        storageService.load(file).toFile().delete();
+        //File n = new File(file);
+        //storageService.load(newFilePath).toFile().renameTo(n);
+
 
         return data;
 
