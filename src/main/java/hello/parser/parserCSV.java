@@ -175,8 +175,8 @@ public class parserCSV {
         //storageService.load(newFilePath).toFile().renameTo(n);
 
 
-        return data;
-
+        //return data;
+        return null;
 
         //MongoDAO.insertLog(newFilePath, storageService);
 

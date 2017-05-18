@@ -81,10 +81,20 @@ public class FileController {
 
     //Removes the non selected columns from a log
     @RequestMapping(value = "/filterLog", method = RequestMethod.POST)
-    public HashMap<String, ArrayList<String>> complexGreeting(@RequestParam("file") String file, Headers headers) {
-        return LogService.getLogByName(file).insertFile(headers);
+    public Headers filterLog(@RequestParam("file") String file, Headers headers) {
+        LogService.getLogByName(file).insertFile(headers);
+        return LogService.getLogByName(file).getHeaders();
         //return parserCSV.removeColumns(file, headers, storageService);
     }
+
+    //Removes the non selected columns from a log
+    @RequestMapping(value = "/hierarchyCols", method = RequestMethod.POST)
+    public void setHierarchyCols(@RequestParam("file") String file, Headers headers) {
+        System.out.println(headers.getData());
+        LogService.getLogByName(file).setHierarchyCols(headers);
+        //return parserCSV.removeColumns(file, headers, storageService);
+    }
+
 
     //Removes the non selected columns from a log
     @RequestMapping(value = "/db", method = RequestMethod.GET)
