@@ -102,7 +102,8 @@ public class FileController {
     //Returns the content of a MongoDB
     @RequestMapping(value = "/db", method = RequestMethod.GET)
     public HashMap<String, ArrayList<String>> db(@RequestParam("db") String db) {
-        return MongoDAO.getContent(db);
+        //return MongoDAO.getContent(db);
+        return LogService.getLogByName(db).UniquesToFilter();
     }
 
     //Queries a log with a determined hierarchy

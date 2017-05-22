@@ -3,6 +3,7 @@ package hello.dataTypes;
 import com.mongodb.DBCollection;
 import hello.parser.parserCSV;
 import hello.persistence.MongoDAO;
+import hello.persistence.MongoJDBC;
 import hello.storage.LogService;
 import org.springframework.data.annotation.Id;
 
@@ -105,6 +106,10 @@ public class Log {
         pairing.put("activity", act);
         pairing.put("timestamp", timestamp);
         LogService.save(this);
+    }
+
+    public HashMap<String,ArrayList<String>> UniquesToFilter() {
+        return MongoDAO.getContent(this.name, this.hierarchyCols);
     }
 }
 

@@ -2,6 +2,7 @@ package hello.persistence;
 
 import com.mongodb.*;
 import hello.dataTypes.Branch;
+import hello.dataTypes.Headers;
 import hello.dataTypes.Hierarchy;
 import hello.parser.parserCSV;
 import hello.storage.StorageService;
@@ -28,15 +29,15 @@ public class MongoDAO {
         return coll;
     }
 
-    public static DBCursor queryCollection(DBCollection coll, BasicDBObject query){
+    public static DBCursor queryCollection(DBCollection coll, BasicDBObject query) {
         return coll.find(query);
     }
 
-    public static DBCollection getCollection(String name){
+    public static DBCollection getCollection(String name) {
         return db.getCollection(name);
     }
 
-    public static Set<String> getCollections(){
+    public static Set<String> getCollections() {
         return db.getCollectionNames();
     }
 
@@ -88,7 +89,9 @@ public class MongoDAO {
 
     }
 
-    public static HashMap<String, ArrayList<String>> getContent(String collName) {
+    public static HashMap<String, ArrayList<String>> getContent(String collName, Headers h) {
+
+        ArrayList<String> headers = h.getData();
 
         DBCollection coll = db.getCollection(collName);
 
@@ -101,8 +104,13 @@ public class MongoDAO {
         for (int i = 1; i < indexes.size(); i++) {
             String key = indexes.get(i).get("key").toString();
             String[] tokens = key.split("\"");
-
-            data.put(tokens[1], (ArrayList<String>) coll.distinct(tokens[1]));
+            if(headers != null) {
+                if (headers.contains(tokens[1])) {
+                    data.put(tokens[1], (ArrayList<String>) coll.distinct(tokens[1]));
+                }
+            }else{
+                data.put(tokens[1], (ArrayList<String>) coll.distinct(tokens[1]));
+            }
         }
 
         return data;
