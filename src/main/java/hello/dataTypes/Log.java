@@ -63,7 +63,9 @@ public class Log {
 
     public void setHierarchyCols(Headers h) {
         this.hierarchyCols = h;
+        LogService.save(this);
     }
+
 
     //GETTERS
     public String getName() {
@@ -97,5 +99,12 @@ public class Log {
         return r;
     }
 
+    public void setTraceActTime(String trace, String act, String timestamp) {
+        this.pairing = new HashMap<>();
+        pairing.put("trace", trace);
+        pairing.put("activity", act);
+        pairing.put("timestamp", timestamp);
+        LogService.save(this);
+    }
 }
 

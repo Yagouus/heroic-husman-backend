@@ -69,7 +69,6 @@ public class FileController {
     public Headers listFileHeaders(@RequestParam("file") String file) {
 
         //System.out.println("Get headers of: " + file);
-
         //Trim uri to file name
         //file = file.substring(file.lastIndexOf("/") + 1, file.length());
         //Load and parse file
@@ -87,22 +86,26 @@ public class FileController {
         //return parserCSV.removeColumns(file, headers, storageService);
     }
 
-    //Removes the non selected columns from a log
+    //Sets the columns used to create hierarchies
     @RequestMapping(value = "/hierarchyCols", method = RequestMethod.POST)
     public void setHierarchyCols(@RequestParam("file") String file, Headers headers) {
-        System.out.println(headers.getData());
         LogService.getLogByName(file).setHierarchyCols(headers);
+    }
+
+    //Sets the columns used to create hierarchies
+    @RequestMapping(value = "/activityCol", method = RequestMethod.POST)
+    public void setActIdTime(@RequestParam("file") String file, String trace, String act, String timestamp) {
+        LogService.getLogByName(file).setTraceActTime(trace, act, timestamp);
         //return parserCSV.removeColumns(file, headers, storageService);
     }
 
-
-    //Removes the non selected columns from a log
+    //Returns the content of a MongoDB
     @RequestMapping(value = "/db", method = RequestMethod.GET)
     public HashMap<String, ArrayList<String>> db(@RequestParam("db") String db) {
         return MongoDAO.getContent(db);
     }
 
-    //Removes the non selected columns from a log
+    //Queries a log with a determined hierarchy
     @RequestMapping(value = "/hierarchy", method = RequestMethod.POST)
     public Hierarchy hierarchy(@RequestParam("file") String file, Hierarchy hierarchies) {
         hierarchies.getBranches();

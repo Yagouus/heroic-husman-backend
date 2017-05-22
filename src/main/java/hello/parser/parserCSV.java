@@ -51,7 +51,7 @@ public class parserCSV {
     public static HashMap<String, ArrayList<String>> removeColumns(Log log, Headers headers) {
 
         String file = log.getPath();
-
+        String name = log.getName();
 
         //Load file and get path
         String filePath = storageService.load(file).toString();
@@ -74,13 +74,13 @@ public class parserCSV {
 
         //Create Mongo collection
         DBCollection coll;
-        if (MongoJDBC.db.collectionExists(file)) {
-            coll = MongoJDBC.db.getCollection(file);
+        if (MongoJDBC.db.collectionExists(name)) {
+            coll = MongoJDBC.db.getCollection(name);
             coll.drop();
         }
 
 
-        coll = MongoJDBC.db.createCollection(file, null);
+        coll = MongoJDBC.db.createCollection(name, null);
 
 
         //Get headers to delete indexes
