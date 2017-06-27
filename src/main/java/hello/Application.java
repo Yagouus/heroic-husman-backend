@@ -29,7 +29,7 @@ public class Application {
 	@Bean
 	CommandLineRunner init(StorageService storageService) {
 		return (args) -> {
-            storageService.deleteAll();
+            //storageService.deleteAll();
             storageService.init();
 			LogService.init(repo);
 			repo.findAll();

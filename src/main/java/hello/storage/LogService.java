@@ -7,12 +7,13 @@ import hello.dataTypes.Log;
 import hello.persistence.LogRepository;
 import hello.persistence.MongoDAO;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class LogService {
 
     private static LogRepository repo;
-    private static DBCollection storage;
+    public static StorageService storageService;
     private static ArrayList<Log> logs = new ArrayList<>();
 
     public static void init(LogRepository repository) {
@@ -25,21 +26,35 @@ public class LogService {
 
     public static Log insertLog(String name, String path) {
         //Insert log
-        repo.save(new Log(null, name, path, name, null,null, null, null, null));
+        repo.save(new Log(null, name, path, name, null, null, null, null, null));
 
         //Return created log
         return null;
     }
 
-    public static ArrayList<Log> getLogs(){
+    public static void deleteLog(Log log) {
+        System.out.println(log.getPath());
+        System.out.println(storageService.load(log.getPath()).toString());
+        File file = new File(storageService.load(log.getPath()).toString());
+
+        if (file.delete()) {
+            System.out.println(file.getName() + " is deleted!");
+        } else {
+            System.out.println("Delete operation is failed.");
+        }
+
+        repo.delete(log);
+    }
+
+    public static ArrayList<Log> getLogs() {
         return logs = (ArrayList<Log>) repo.findAll();
     }
 
-    public static Log getLogByName(String name){
+    public static Log getLogByName(String name) {
         return repo.findByName(name);
     }
 
-    public static Log save(Log log){
+    public static Log save(Log log) {
         return repo.save(log);
     }
 

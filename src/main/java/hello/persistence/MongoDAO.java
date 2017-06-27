@@ -104,11 +104,11 @@ public class MongoDAO {
         for (int i = 1; i < indexes.size(); i++) {
             String key = indexes.get(i).get("key").toString();
             String[] tokens = key.split("\"");
-            if(headers != null) {
+            if (headers != null) {
                 if (headers.contains(tokens[1])) {
                     data.put(tokens[1], (ArrayList<String>) coll.distinct(tokens[1]));
                 }
-            }else{
+            } else {
                 data.put(tokens[1], (ArrayList<String>) coll.distinct(tokens[1]));
             }
         }
@@ -167,7 +167,7 @@ public class MongoDAO {
                 System.out.println("Inserted Document: " + i);
                 BasicDBObject doc = (BasicDBObject) cursor.next();
                 headers = new ArrayList<>(doc.keySet());
-                System.out.println(doc);
+                //System.out.println(doc);
                 MongoJDBC.insert(coll, doc);
                 i++;
             }
@@ -195,5 +195,46 @@ public class MongoDAO {
         return result;
 
     }
+
+    public static void replaceNulls(String collName, String column, String value) {
+
+        //Create object with the query
+        BasicDBObject query = new BasicDBObject();
+        query.put(column, "-");
+
+        //Get the collection
+        DBCollection coll = db.getCollection(collName);
+
+        //Add new value to the object
+        BasicDBObject doc = new BasicDBObject();
+        doc.append("$set", new BasicDBObject().append(column, value));
+
+        //Update collection
+        coll.updateMulti(query, doc);
+
+    }
+
+    public static void replaceValues(String collName, String column, ArrayList<String> values, String replacement) {
+
+        //Get the collection
+        DBCollection coll = db.getCollection(collName);
+
+        for (String value : values) {
+
+            //Create object with the query
+            BasicDBObject query = new BasicDBObject();
+            query.put(column, value);
+
+            //Add new value to the object
+            BasicDBObject doc = new BasicDBObject();
+            doc.append("$set", new BasicDBObject().append(column, replacement));
+
+            //Update collection
+            coll.updateMulti(query, doc);
+        }
+    }
+
+
 }
+
 
