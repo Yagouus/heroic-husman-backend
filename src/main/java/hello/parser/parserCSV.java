@@ -86,28 +86,28 @@ public class parserCSV {
         //Get headers to delete indexes
         ArrayList<Integer> indexes = new ArrayList<>();
         ArrayList<String> originalHeaders = log.getHeaders().getData();
-        ArrayList<String> newHeaders = new ArrayList<>();
+        //ArrayList<String> newHeaders = new ArrayList<>();
         for (String header : headers.getData()) {
             if (originalHeaders.contains(header)) {
                 indexes.add(originalHeaders.indexOf(header));
-                newHeaders.add(originalHeaders.get(originalHeaders.indexOf(header)));
+                //newHeaders.add(originalHeaders.get(originalHeaders.indexOf(header)));
             }
         }
 
         //Rewrite new file
         String line = "";
-        String cvsSplitBy = ",";
         ArrayList<String> result = new ArrayList<>();
 
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
 
-            //We skip headers in DB
+            //Headers
             if ((line = br.readLine()) != null) {
 
                 //For each column of the file
-                String[] columns = line.split(cvsSplitBy);
+                String[] columns = line.split(",");
                 for (int i = 0; i < columns.length; i++) {
                     if (indexes.contains(i)) {
+
                         //Write to new file
                         writer.print(columns[i]);
 
@@ -127,23 +127,25 @@ public class parserCSV {
                 BasicDBObject doc = new BasicDBObject();
 
                 //For each column of the file
-                String[] columns = line.split(cvsSplitBy);
+                String[] columns = line.split(",");
                 for (int i = 0; i < columns.length; i++) {
                     if (indexes.contains(i)) {
 
                         //Write to new file
                         writer.print(columns[i]);
 
-                        //Add to mongo doc
+                        //Add to mongo doc and remove quotes
                         String data = columns[i];
                         data = data.replace("\"", "");
 
+                        //If column is empty, add a dash
                         if (!data.equals("")) {
                             doc.append(originalHeaders.get(i), data);
                         }else{
                             doc.append(originalHeaders.get(i), "-");
                         }
 
+                        //Add a colon after each column
                         if (i < columns.length - 1) {
                             writer.print(",");
                         }
@@ -151,8 +153,10 @@ public class parserCSV {
                 }
 
                 //Insert Mongo doc
-
                 MongoJDBC.insert(coll, doc);
+                if(doc.getString("PER_COD").equals("5145879")){
+                    System.out.println(doc);
+                }
                 writer.print("\n");
             }
 
@@ -164,7 +168,7 @@ public class parserCSV {
         HashMap<String, ArrayList<String>> data = new HashMap<>();
 
         //Create index for each field
-        for (String header : newHeaders) {
+        for (String header : headers.getData()) {
             coll.createIndex(header);
             data.put(header, (ArrayList<String>) coll.distinct(header));
         }

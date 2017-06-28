@@ -56,8 +56,9 @@ public class FileController {
 
     //Lists all files in the server
     @CrossOrigin
-    @RequestMapping(value = "/logs/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/logs/{id:.+}", method = RequestMethod.DELETE)
     public void deleteLog(@PathVariable("id") String id) throws IOException {
+        System.out.println(id);
         LogService.deleteLog(LogService.getLogByName(id));
 
         //return LogService.getLogs();

@@ -146,13 +146,16 @@ public class MongoDAO {
                 //headers.add(pair.getKey().toString());
 
                 //For each value
+                List<String> list = new ArrayList<>();
                 for (String value : b.getData().get(pair.getKey())) {
-                    query.put(pair.getKey().toString(), value);
+                    list.add(value);
                     System.out.println(pair.getKey().toString() + " = " + value);
                 }
+                query.put(pair.getKey().toString(), new BasicDBObject("$in", list));
             }
 
             //Do the query
+            System.out.println(query);
             DBCursor cursor = coll.find(query);
             int i = 1;
 
@@ -164,7 +167,7 @@ public class MongoDAO {
             coll = db.createCollection(file + bIndex, null);
 
             while (cursor.hasNext()) {
-                System.out.println("Inserted Document: " + i);
+                //System.out.println("Inserted Document: " + i);
                 BasicDBObject doc = (BasicDBObject) cursor.next();
                 headers = new ArrayList<>(doc.keySet());
                 //System.out.println(doc);
@@ -234,7 +237,10 @@ public class MongoDAO {
         }
     }
 
-
+    public static void dropColl(String collName) {
+        DBCollection coll = db.getCollection(collName);
+        coll.drop();
+    }
 }
 
 

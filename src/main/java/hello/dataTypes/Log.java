@@ -64,7 +64,9 @@ public class Log {
         this.hierarchyCols = h;
         LogService.save(this);
     }
-
+    public void setState(String state) {
+        this.state = state;
+    }
 
     //GETTERS
     public String getName() {
@@ -86,6 +88,9 @@ public class Log {
 
         return this.headers;
     }
+    public String getState() {
+        return state;
+    }
     public HashMap<String, String> getPairing() {
         return pairing;
     }
@@ -98,9 +103,16 @@ public class Log {
 
     //Custom funcs
     public HashMap<String, ArrayList<String>> insertFile(Headers columns) {
+
+        this.setState("Processing");
+        LogService.save(this);
+
         HashMap<String, ArrayList<String>> r = parserCSV.removeColumns(this, columns);
         this.headers = parserCSV.getHeaders(this.path);
+        this.setState("loaded");
         LogService.save(this);
+
+
         return r;
     }
 
@@ -123,6 +135,17 @@ public class Log {
 
     public void replaceValues(String column, ArrayList<String> values, String replacement) {
         MongoDAO.replaceValues(this.getName(), column, values, replacement);
+    }
+
+    private void setState(){
+        if(this.getHierarchyCols() != null){
+            this.setState("processing");
+
+        }
+    }
+
+    public void dropColl(){
+        MongoDAO.dropColl(this.name);
     }
 }
 

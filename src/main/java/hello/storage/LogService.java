@@ -33,17 +33,23 @@ public class LogService {
     }
 
     public static void deleteLog(Log log) {
-        System.out.println(log.getPath());
-        System.out.println(storageService.load(log.getPath()).toString());
+
+        //Delete file
         File file = new File(storageService.load(log.getPath()).toString());
 
         if (file.delete()) {
             System.out.println(file.getName() + " is deleted!");
         } else {
-            System.out.println("Delete operation is failed.");
+            System.out.println("File not found");
         }
 
+        //Delete MongoDB Coll
+        log.dropColl();
+
+        //Delete log from coll
         repo.delete(log);
+
+        System.out.println("LOG DELETED");
     }
 
     public static ArrayList<Log> getLogs() {
