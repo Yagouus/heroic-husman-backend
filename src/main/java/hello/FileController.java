@@ -175,7 +175,7 @@ public class FileController {
     public Hierarchy hierarchy(@RequestParam("file") String file, Hierarchy hierarchies) {
         System.out.println(hierarchies.getData());
         hierarchies.getBranches();
-        return MongoDAO.queryLog(file, hierarchies, storageService);
+        return MongoDAO.queryLog(LogService.getLogByName(file), hierarchies, storageService);
 
     }
 }

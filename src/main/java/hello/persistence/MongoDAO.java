@@ -4,6 +4,7 @@ import com.mongodb.*;
 import hello.dataTypes.Branch;
 import hello.dataTypes.Headers;
 import hello.dataTypes.Hierarchy;
+import hello.dataTypes.Log;
 import hello.parser.parserCSV;
 import hello.storage.StorageService;
 
@@ -117,8 +118,9 @@ public class MongoDAO {
 
     }
 
-    public static Hierarchy queryLog(String file, Hierarchy h, StorageService storageService) {
+    public static Hierarchy queryLog(Log log, Hierarchy h, StorageService storageService) {
 
+        String file = log.getName();
         System.out.println(file);
         System.out.println(h.getData());
 
@@ -166,6 +168,7 @@ public class MongoDAO {
             }
             coll = db.createCollection(file + bIndex, null);
 
+            //Insert documents
             while (cursor.hasNext()) {
                 //System.out.println("Inserted Document: " + i);
                 BasicDBObject doc = (BasicDBObject) cursor.next();
@@ -179,8 +182,25 @@ public class MongoDAO {
             //Get unique values
             HashMap<String, ArrayList<String>> data = new HashMap<>();
 
+            //Rename fields with id, trace and timestamp
+            Iterator mi = log.getPairing().entrySet().iterator();
+            while (mi.hasNext()) {
+                Map.Entry pair = (Map.Entry)mi.next();
+
+                //Add new value to the object
+                BasicDBObject doc = new BasicDBObject();
+                doc.append("$rename", new BasicDBObject().append(pair.getValue().toString(), pair.getKey().toString()));
+
+                //Update collection
+                coll.updateMulti(query, doc);
+                System.out.println(pair.getKey() + " = " + pair.getValue());
+                //mi.remove(); // avoids a ConcurrentModificationException
+            }
+
+            mi = log.getPairing().entrySet().iterator();
+
             //Create index for each field
-            if (!headers.isEmpty()) {
+            /*if (!headers.isEmpty()) {
                 headers.remove(0);
                 for (String header : headers) {
                     coll.createIndex(header);
@@ -189,7 +209,7 @@ public class MongoDAO {
 
                 Branch temp = new Branch(data);
                 content.add(temp);
-            }
+            }*/
         }
 
 
