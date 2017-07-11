@@ -6,14 +6,17 @@ import domainLogic.exceptions.*;
 import domainLogic.workflow.CaseInstance;
 import domainLogic.workflow.Log;
 import domainLogic.workflow.LogEntryInterface;
+import domainLogic.workflow.algorithms.geneticMining.individual.CMIndividual;
 import domainLogic.workflow.algorithms.heuristic.heuristicsminer.HeuristicsMiner;
 import domainLogic.workflow.algorithms.heuristic.settings.HeuristicsMinerSettings;
+import domainLogic.workflow.logReader.LogReaderCSV;
 import domainLogic.workflow.logReader.LogReaderInterface;
 import logEditor.dataTypes.Branch;
 import logEditor.dataTypes.Headers;
 import logEditor.dataTypes.Hierarchy;
 import logEditor.dataTypes.LogFile;
 import logEditor.parser.parserCSV;
+import logEditor.storage.LogService;
 import logEditor.storage.StorageService;
 
 import java.io.*;
@@ -209,33 +212,37 @@ public class MongoDAO {
 
             cursor = coll.find();
 
-            /*LogReaderInterface reader = LogReader
-            ArrayList<LogEntryInterface> entries = reader.read(null, null, null);
+            printToCSV(coll);
+
+            LogReaderInterface reader = new LogReaderCSV();
+            File f = new File(coll.getName());
+
+            ArrayList<LogEntryInterface> entries = reader.read(null, null, f);
 
             Log l = new Log("log", "path", entries);
-            ArrayList<CaseInstance> instances = new ArrayList<>();
+            System.out.println();
+
+            /*ArrayList<CaseInstance> instances = new ArrayList<>();
             while (cursor.hasNext()) {
                 DBObject trace = cursor.next();
                 CaseInstance c = new CaseInstance();
                 c.setId(trace.get("trace").toString());
-                while (cursor.next().get("trace").toString().equals(trace.get("trace").toString())) {
-                    c.addToTaskSequence((Integer) cursor.curr().get("activity"));
+                while (cursor.hasNext() && cursor.next().get("trace").toString().equals(trace.get("trace").toString())) {
+                    c.addToTaskSequence(Integer.parseInt(cursor.curr().get("activity").toString()));
                 }
                 instances.add(c);
             }
 
             //Set instances
-            l.setCaseInstances(instances);
+            l.setCaseInstances(instances);*/
 
             //Add tasks
 
             //Call heuristic minner
+
             HeuristicsMiner hm = new HeuristicsMiner(l, new HeuristicsMinerSettings());
-            hm.mine();*/
-
-            printToCSV(coll);
-
-
+            CMIndividual individual = hm.mine();
+            individual.print();
         }
 
 
@@ -304,16 +311,20 @@ public class MongoDAO {
         DBCursor cursor = coll.find();
 
         //Write header
-        writer.print("trace, activity, timestamp");
+        writer.print("CaseIdentifier, TaskIdentifier\n");
 
         //Iterate results
         while (cursor.hasNext()) {
             DBObject trace = cursor.next();
             //System.out.println(trace);
             writer.print(trace.get("trace") + ",");
-            writer.print(trace.get("activity") + ",");
-            writer.print(trace.get("timestamp")+ "\n");
+            writer.print(trace.get("activity") + "\n");
+            //writer.print(trace.get("timestamp")+ "\n");
+            //writer.print(":complete\n");
         }
+
+        writer.print("\n");
+        writer.close();
 
     }
 }
