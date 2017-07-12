@@ -131,7 +131,7 @@ public class FileController {
     //Queries a log with a determined hierarchy
     @CrossOrigin
     @RequestMapping(value = "/hierarchy", method = RequestMethod.POST)
-    public Hierarchy hierarchy(@RequestParam("file") String file, Hierarchy hierarchies) throws EmptyLogException, WrongLogEntryException, MalformedFileException, NonFinishedWorkflowException, InvalidFileExtensionException {
+    public String hierarchy(@RequestParam("file") String file, Hierarchy hierarchies) throws EmptyLogException, WrongLogEntryException, MalformedFileException, NonFinishedWorkflowException, InvalidFileExtensionException {
 
         hierarchies.getBranches();
         return MongoDAO.queryLog(LogService.getLogByName(file), hierarchies, storageService);

@@ -3,7 +3,6 @@ package logEditor.persistence;
 import com.mongodb.*;
 
 import domainLogic.exceptions.*;
-import domainLogic.workflow.CaseInstance;
 import domainLogic.workflow.Log;
 import domainLogic.workflow.LogEntryInterface;
 import domainLogic.workflow.algorithms.geneticMining.individual.CMIndividual;
@@ -11,12 +10,12 @@ import domainLogic.workflow.algorithms.heuristic.heuristicsminer.HeuristicsMiner
 import domainLogic.workflow.algorithms.heuristic.settings.HeuristicsMinerSettings;
 import domainLogic.workflow.logReader.LogReaderCSV;
 import domainLogic.workflow.logReader.LogReaderInterface;
+import heuristic.parserHN;
 import logEditor.dataTypes.Branch;
 import logEditor.dataTypes.Headers;
 import logEditor.dataTypes.Hierarchy;
 import logEditor.dataTypes.LogFile;
 import logEditor.parser.parserCSV;
-import logEditor.storage.LogService;
 import logEditor.storage.StorageService;
 
 import java.io.*;
@@ -127,7 +126,7 @@ public class MongoDAO {
 
     }
 
-    public static Hierarchy queryLog(LogFile logFile, Hierarchy h, StorageService storageService) throws EmptyLogException, WrongLogEntryException, MalformedFileException, NonFinishedWorkflowException, InvalidFileExtensionException {
+    public static String queryLog(LogFile logFile, Hierarchy h, StorageService storageService) throws EmptyLogException, WrongLogEntryException, MalformedFileException, NonFinishedWorkflowException, InvalidFileExtensionException {
 
         String file = logFile.getName();
 
@@ -243,6 +242,27 @@ public class MongoDAO {
             HeuristicsMiner hm = new HeuristicsMiner(l, new HeuristicsMinerSettings());
             CMIndividual individual = hm.mine();
             individual.print();
+            return parserHN.translate(individual);
+
+            //individual.print();
+            /*for (int j = 0; j < individual.getNumOfTasks(); j++) {
+                CMTask task = individual.getTask(j);
+                if (task != null) {
+                    for (TIntHashSet tIntHashSet : task.getInputs()) {
+                        for (Integer inputId :
+                                tIntHashSet) {
+
+                        }
+
+                    }
+
+                    for (TIntHashSet tIntHashSet : task.getOutputs()) {
+
+                    }
+
+
+                }
+            }*/
         }
 
 
@@ -250,7 +270,7 @@ public class MongoDAO {
         result.setBranches(content);
 
 
-        return result;
+        return null;
 
     }
 
