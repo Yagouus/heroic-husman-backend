@@ -10,6 +10,7 @@ import domainLogic.exceptions.*;
 import logEditor.dataTypes.Headers;
 import logEditor.dataTypes.Hierarchy;
 import logEditor.dataTypes.LogFile;
+import logEditor.dataTypes.Result;
 import logEditor.parser.parserCSV;
 import logEditor.persistence.MongoDAO;
 import logEditor.storage.LogService;
@@ -131,7 +132,7 @@ public class FileController {
     //Queries a log with a determined hierarchy
     @CrossOrigin
     @RequestMapping(value = "/hierarchy", method = RequestMethod.POST)
-    public String hierarchy(@RequestParam("file") String file, Hierarchy hierarchies) throws EmptyLogException, WrongLogEntryException, MalformedFileException, NonFinishedWorkflowException, InvalidFileExtensionException {
+    public ArrayList<Result> hierarchy(@RequestParam("file") String file, Hierarchy hierarchies) throws EmptyLogException, WrongLogEntryException, MalformedFileException, NonFinishedWorkflowException, InvalidFileExtensionException {
 
         hierarchies.getBranches();
         return MongoDAO.queryLog(LogService.getLogByName(file), hierarchies, storageService);

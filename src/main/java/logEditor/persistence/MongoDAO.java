@@ -11,10 +11,7 @@ import domainLogic.workflow.algorithms.heuristic.settings.HeuristicsMinerSetting
 import domainLogic.workflow.logReader.LogReaderCSV;
 import domainLogic.workflow.logReader.LogReaderInterface;
 import heuristic.parserHN;
-import logEditor.dataTypes.Branch;
-import logEditor.dataTypes.Headers;
-import logEditor.dataTypes.Hierarchy;
-import logEditor.dataTypes.LogFile;
+import logEditor.dataTypes.*;
 import logEditor.parser.parserCSV;
 import logEditor.storage.StorageService;
 
@@ -126,7 +123,7 @@ public class MongoDAO {
 
     }
 
-    public static String queryLog(LogFile logFile, Hierarchy h, StorageService storageService) throws EmptyLogException, WrongLogEntryException, MalformedFileException, NonFinishedWorkflowException, InvalidFileExtensionException {
+    public static ArrayList<Result> queryLog(LogFile logFile, Hierarchy h, StorageService storageService) throws EmptyLogException, WrongLogEntryException, MalformedFileException, NonFinishedWorkflowException, InvalidFileExtensionException {
 
         String file = logFile.getName();
 
@@ -137,6 +134,8 @@ public class MongoDAO {
         //Data to return
         Hierarchy result = new Hierarchy();
         ArrayList<Branch> content = new ArrayList<>();
+
+        ArrayList<Result> models = new ArrayList<>();
 
         //For each branch
         for (Branch b : h.getBranches()) {
@@ -241,8 +240,10 @@ public class MongoDAO {
 
             HeuristicsMiner hm = new HeuristicsMiner(l, new HeuristicsMinerSettings());
             CMIndividual individual = hm.mine();
-            individual.print();
-            return parserHN.translate(individual);
+            Result r = new Result();
+            r.setModel(parserHN.translate(individual));
+            //r.setModel("modelo");
+            models.add(r);
 
             //individual.print();
             /*for (int j = 0; j < individual.getNumOfTasks(); j++) {
@@ -267,10 +268,10 @@ public class MongoDAO {
 
 
         //Return result
-        result.setBranches(content);
+        //result.setBranches(content);
 
 
-        return null;
+        return models;
 
     }
 
