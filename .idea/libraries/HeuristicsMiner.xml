@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="HeuristicsMiner">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/src/main/java/heuristic/HeuristicsMiner.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>
