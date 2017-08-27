@@ -1,24 +1,18 @@
 package logEditor;
 
-import logEditor.persistence.LogRepository;
-import logEditor.storage.LogService;
-import logEditor.storage.StorageProperties;
-import logEditor.storage.StorageService;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 @SpringBootApplication
-@EnableConfigurationProperties(StorageProperties.class)
-@EnableMongoRepositories
+@EnableConfigurationProperties()
+
 public class Application {
 
-	@Autowired
-	private LogRepository repo;
+
 
 	public static void main(String[] args) {
 		//MongoJDBC mongo = new MongoJDBC();
@@ -26,12 +20,9 @@ public class Application {
 	}
 
 	@Bean
-	CommandLineRunner init(StorageService storageService) {
+	CommandLineRunner init() {
 		return (args) -> {
-            //storageService.deleteAll();
-            storageService.init();
-			LogService.init(repo);
-			repo.findAll();
+
 		};
 	}
 }
