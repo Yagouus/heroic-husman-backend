@@ -12,6 +12,13 @@ import org.springframework.mail.javamail.MimeMessagePreparator;
 
 import org.springframework.web.bind.annotation.*;
 
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+import java.util.Properties;
 
 
 @RestController
@@ -29,27 +36,42 @@ public class FileController {
     @RequestMapping(value = "/email", method = RequestMethod.POST)
     public void sendEmail(String name, String sender, String tlf, String msg) throws Exception {
 
-        System.out.println(name + sender + tlf + msg);
+        final String username = "esbaostienda@gmail.com";
+        final String password = "aos12345";
 
-        MimeMessagePreparator messagePreparator = mimeMessage -> {
-            MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage);
-            messageHelper.setFrom("sample@dolszewski.com");
-            messageHelper.setTo("yagofontenla95@gmail.com");
-            messageHelper.setSubject("FORMULARIO CONTACTO WEB");
-            messageHelper.setText("Nombre: " + name
-            + "\nEmail: " + sender
-            + "\nMovil: " + tlf
-            + "\nMensaje: " + msg);
+        Properties props = new Properties();
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.smtp.host", "smtp.gmail.com");
+        props.put("mail.smtp.port", "587");
 
+        Session session = Session.getInstance(props,
+                new javax.mail.Authenticator() {
+                    protected javax.mail.PasswordAuthentication getPasswordAuthentication() {
+                        return new javax.mail.PasswordAuthentication(username, password);
+                    }
+                });
 
-        };
         try {
-            this.sender.send(messagePreparator);
-        } catch (MailException e) {
-            // runtime exception; compiler will not force you to handle it
+
+            Message message = new MimeMessage(session);
+            message.setFrom(new InternetAddress("MENSAJE-WEB"));
+            message.setRecipients(Message.RecipientType.TO,
+                    InternetAddress.parse("info@crossfitberkana.com"));
+            message.setSubject("CONSULTA WEB BERKANA");
+            message.setText("Nombre: " + name
+                    + "\nEmail: " + sender
+                    + "\nMovil: " + tlf
+                    + "\nMensaje: " + msg);
+
+            Transport.send(message);
+
+            System.out.println("Done");
+
+
+        }catch (MessagingException e) {
+            throw new RuntimeException(e);
         }
-
-
     }
 
 }
