@@ -33,7 +33,7 @@ public class FileController {
 
     //Send email
     @CrossOrigin
-    @RequestMapping(value = "/email", method = RequestMethod.POST)
+    @RequestMapping(value = "/email")
     public void sendEmail(String name, String sender, String tlf, String msg) throws Exception {
 
         final String username = "esbaostienda@gmail.com";
