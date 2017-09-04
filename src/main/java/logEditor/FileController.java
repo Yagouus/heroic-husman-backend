@@ -55,7 +55,7 @@ public class FileController {
         try {
 
             Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress("MENSAJE-WEB"));
+            message.setFrom(new InternetAddress(sender, name));
             message.setRecipients(Message.RecipientType.TO,
                     InternetAddress.parse("info@crossfitberkana.com"));
             message.setSubject("CONSULTA WEB BERKANA");
@@ -65,8 +65,6 @@ public class FileController {
                     + "\nMensaje: " + msg);
 
             Transport.send(message);
-
-            System.out.println("Done");
 
 
         }catch (MessagingException e) {

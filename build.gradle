@@ -26,11 +26,10 @@ targetCompatibility = 1.8
 
 dependencies {
     compile("org.springframework.boot:spring-boot-starter-thymeleaf")
-    //compile("org.springframework.boot:spring-boot-starter-data-mongodb")
     compile('org.springframework.boot:spring-boot-starter-mail')
     compile ('org.json:json:20090211')
     testCompile('org.springframework.boot:spring-boot-starter-test')
-    compile files('src/main/java/heuristic/ProDiGen.jar')
+
 
 }
 
